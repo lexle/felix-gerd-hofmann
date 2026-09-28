@@ -1,6 +1,11 @@
 # felix-gerd-hofmann.de
 
-Static portfolio site. Plain HTML and one stylesheet, no build step, no JavaScript, no cookies,
+Portfolio site of Felix Hofmann, Principal Product Manager in Berlin.
+
+- Live: https://portfolio-fgh.web.app (custom domain felix-gerd-hofmann.de pending DNS)
+- Hosting: Firebase Hosting, Google Cloud project `portfolio-fgh`
+
+Static site. Plain HTML and one stylesheet, no build step, no JavaScript, no cookies,
 no third-party requests. Fonts (Newsreader, IBM Plex Sans/Mono, SIL OFL) and photos are self-hosted.
 
 ```
