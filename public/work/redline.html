@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Redline: AI that proves its claims · Felix Hofmann</title>
+<meta name="description" content="Case study: Redline, an AI contract reader for freelancers in which every risk flag must quote its exact source sentence. Research, PRD, ten decision records, and an honest build status.">
+<link rel="canonical" href="https://felix-gerd-hofmann.de/work/redline">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preload" href="/assets/fonts/newsreader-opsz.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:title" content="Redline: AI that proves its claims">
+<meta property="og:image" content="https://felix-gerd-hofmann.de/assets/img/og.jpg">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="masthead">
+  <div class="wrap masthead__inner">
+    <a class="masthead__name" href="/">Felix Hofmann</a>
+    <nav aria-label="Main">
+      <ul class="nav">
+        <li><a href="/#work" aria-current="page">Work</a></li>
+        <li><a href="/about">About</a></li>
+        <li><a href="/contact">Contact</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main id="main" class="wrap">
+  <header class="page-head">
+    <p class="crumb"><a href="/#work">Work</a> / 04</p>
+    <h1>An AI contract reader that has to prove every claim it makes</h1>
+    <p class="lede">Redline reads a contract before a freelancer signs it, flags the clauses that could hurt them, and drafts a reply they can send. It’s my own product, it’s still in build, and it’s where I’m learning the parts of AI product work that don’t show up in a demo.</p>
+  </header>
+
+  <dl class="meta">
+    <div><dt>Type</dt><dd>Own product, pre-launch</dd></div>
+    <div><dt>Role</dt><dd>Founder and product manager</dd></div>
+    <div><dt>Started</dt><dd>08.2026</dd></div>
+    <div><dt>Stack</dt><dd>Next.js, Supabase, LLM via OpenRouter</dd></div>
+  </dl>
+
+  <ul class="figs">
+    <li><b>100%</b><span>of risk flags must quote a real sentence from the document, enforced in CI</span></li>
+    <li><b>10</b><span>architecture decision records, written before the code</span></li>
+    <li><b>7</b><span>tests that define “good”, one build gate and six launch gates</span></li>
+  </ul>
+
+  <div class="case-body">
+    <section class="case-section">
+      <h2>The user</h2>
+      <div class="prose">
+        <p>A US freelancer or small-business owner looking at a contract the other side drafted. They suspect a clause could hurt them and can’t tell which one. A lawyer’s review costs around $670 on average (ContractsCounsel), so most people just sign.</p>
+        <p>Before building anything I collected 18 sourced pain findings and looked at 11 competitors, including free tools that already explain contracts.</p>
+      </div>
+    </section>
+
+    <section class="case-section">
+      <h2>The real problem</h2>
+      <div class="prose">
+        <p>A language model that paraphrases a contract can sound right and be wrong, and the reader has no way to tell the difference. For this user, a confident mistake is worse than no answer. So the product question wasn’t “can a model read a contract?” It was “how does the user check what the model says?”</p>
+      </div>
+    </section>
+
+    <section class="case-section">
+      <h2>Decisions</h2>
+      <div class="prose">
+        <h3>Every flag cites its sentence, exactly</h3>
+        <p>The server splits the stored text into sentences with fixed positions. The model cites a sentence ID and repeats the quote, and the quote has to match the stored text byte for byte or the whole analysis fails. I dropped character offsets early because models are bad at counting characters. Nothing is fuzzy-matched.</p>
+        <h3>Quiet is a feature</h3>
+        <p>Redline flags only what is uncapped or inescapable. A fair contract returns zero risk flags and a checklist of what was checked. A tool that finds something in every document is a horoscope.</p>
+        <h3>Absences are kept separate</h3>
+        <p>Missing protections, like a contract with no payment deadline, go in their own list. They cite nothing, because they claim nothing about the text.</p>
+        <h3>Confidence follows provenance</h3>
+        <p>How firmly Redline says something depends on what the statement rests on, never on how sure the model sounds. Where the answer depends on facts it doesn’t have, like jurisdiction or leverage, it says nothing.</p>
+        <h3>Say no to OCR</h3>
+        <p>Scanned documents are refused. A citation is worthless if it points at misread text.</p>
+        <h3>Explain, never advise</h3>
+        <p>Redline says what the document says and does. It doesn’t tell anyone what to do legally. DoNotPay’s $193K FTC settlement came from exactly that claim.</p>
+      </div>
+    </section>
+
+    <section class="case-section">
+      <h2>How it’s built</h2>
+      <div class="prose">
+        <p>Research first, then a PRD with seven tests, then ten decision records, then tickets. Coding agents built the tickets in an unattended run. Every ticket was checked with typecheck, the full test suite, a production build and a scan for stubs and mocks before it was committed. Wherever an agent had to decide something without me, the decision went into a build report I review.</p>
+      </div>
+    </section>
+
+    <section class="case-section">
+      <h2>Honest status</h2>
+      <div class="prose">
+        <div class="note">
+          <p><strong>Where it stands, September 2026.</strong> 17 of 20 build tickets are done and CI passes. What isn’t done:</p>
+          <ul>
+            <li>No output has been verified against the real model yet. An upstream rate limit blocked every attempt, so only the stubbed pipeline is proven.</li>
+            <li>The real test corpora, including a set of fair contracts that must come back clean, are still to be assembled by hand. I don’t want an agent-written “fair” contract grading the model.</li>
+            <li>A lawyer’s review of the severity ranking and a direct test against a free competitor are both still open.</li>
+            <li>Who pays, and how, is undecided.</li>
+          </ul>
+          <p>I’m publishing the gaps on purpose. Eval design, failure behaviour and deciding what not to claim are the job.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="case-section">
+      <h2>What carries over</h2>
+      <div class="prose">
+        <p>Evaluation as a product deliverable. Designing for the times the model is wrong. Keeping cost, latency and quality in view together. And the same instinct as in regulated fintech: if users can’t check it, they shouldn’t have to trust it.</p>
+      </div>
+    </section>
+  </div>
+
+  <nav class="case-next" aria-label="More case studies">
+    <a href="/work/trusted-shops"><span class="label">Previous · 03</span><span>Trusted Shops: growth through partners</span></a>
+    <a href="/about"><span class="label">Next</span><span>About me</span></a>
+  </nav>
+</main>
+
+<footer class="footer">
+  <div class="wrap footer__inner">
+    <p>Felix Hofmann · Principal Product Manager · Berlin</p>
+    <ul class="footer__links">
+      <li><a href="mailto:felix.hofmann@haorga.com">felix.hofmann@haorga.com</a></li>
+      <li><a href="https://www.linkedin.com/in/felix-gerd-hofmann">LinkedIn</a></li>
+      <li><a href="/impressum">Impressum &amp; Datenschutz</a></li>
+    </ul>
+  </div>
+</footer>
+</body>
+</html>
